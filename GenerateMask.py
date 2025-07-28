@@ -1,4 +1,5 @@
 import os
+import sys
 import math
 from preprocess.humanparsing.run_parsing import Parsing
 from preprocess.dwpose import DWposeDetector
