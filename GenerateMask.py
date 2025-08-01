@@ -1,25 +1,26 @@
 import os
 import sys
-import math
-from preprocess.humanparsing.run_parsing import Parsing
-from preprocess.dwpose import DWposeDetector
-import torch
-import torch.nn as nn
-from src.pose_guider import PoseGuider
-from PIL import Image
-from src.utils_mask import get_mask_location
-import numpy as np
-import cv2
-import random
 import argparse
 import logging
+import json
+import numpy as np
+import torch
+
+from PIL import Image
+
+from preprocess.humanparsing.run_parsing import Parsing
+from preprocess.dwpose import DWposeDetector
+from src.utils_mask import get_mask_location
 from Util.Logging import set_up_logging
 
 def parse_args():
     parser = argparse.ArgumentParser(description="GenerateMask")
-    parser.add_argument("--vton_image", type=str, required=True, help="vton image")
-    parser.add_argument("--category", type=str, required=True, help="category")
     parser.add_argument("--model_path", type=str, required=True, help="The path of FitDiT model.")
+    parser.add_argument("--file_path", type=str, required=True, help="Path to the paired file")
+    parser.add_argument("--input_image", type=str, required=True, help="Path to input directory")
+    parser.add_argument("--input_cloth", type=str, required=True, help="Path to input directory")
+    parser.add_argument("--output_mask", type=str, required=True, help="Path to output directory")
+    parser.add_argument("--output_pose", type=str, required=True, help="Path to output directory")
     parser.add_argument("--device", type=str, default="cuda:0", help="Device to use")
     parser.add_argument("--offload", action="store_true", help="Offload model to CPU when not in use.")
     parser.add_argument("--aggressive_offload", action="store_true", help="Offload model more aggressively to CPU when not in use.")
@@ -87,6 +88,12 @@ def resize_image(img, target_size=768):
 if __name__ == "__main__":
     args = parse_args()
 
+    FILE_PATH = args.file_path
+    DIR_IN_IMAGE = args.input_image
+    DIR_IN_CLOTH = args.input_cloth
+    DIR_OUT_MASK = args.output_mask
+    DIR_OUT_POSE = args.output_pose
+
     DEBUG = args.debug
     level = "debug" if DEBUG else "info"
     script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
@@ -96,15 +103,30 @@ if __name__ == "__main__":
 
     generator = MaskGenerator(args.model_path, offload=args.offload, aggressive_offload=args.aggressive_offload, device=args.device)
 
-    vton_img = args.vton_image
-    category = args.category
+    # Read paired list
+    with open(FILE_PATH, 'r') as f:lines = f.readlines()
 
-    offset_top = 0
-    offset_bottom = 0
-    offset_left = 0
-    offset_right = 0
+    # Main loop
+    for line in lines:
+        image_file, cloth_file = line.strip().split()
+        full_image_file = os.path.join(DIR_IN_IMAGE, image_file)
+        full_cloth_file = os.path.join(DIR_IN_CLOTH, cloth_file)
+        full_json_file = os.path.splitext(full_cloth_file)[0] + '.json'
 
-    masked_vton_img, pose_image = generator.generate_mask(vton_img, category, offset_top, offset_bottom, offset_left, offset_right)
+        # Parse JSON
+        with open(full_json_file, "r") as f:record = json.load(f)
+        category = record.get('cloth_type')
 
-    Image.fromarray(masked_vton_img['composite']).save("output_masked.png")
-    pose_image.save("output_pose.png")
+        offset_top = 0
+        offset_bottom = 0
+        offset_left = 0
+        offset_right = 0
+
+        masked_vton_img, pose_image = generator.generate_mask(full_image_file, category, offset_top, offset_bottom, offset_left, offset_right)
+
+        base_name = os.path.splitext(os.path.basename(image_file))[0]
+        full_masked_file = os.path.join(DIR_OUT_MASK, f"{base_name}_mask.png")
+        full_pose_file = os.path.join(DIR_OUT_POSE, f"{base_name}_pose.png")
+
+        Image.fromarray(masked_vton_img['composite']).save(full_masked_file)
+        pose_image.save(full_pose_file)
