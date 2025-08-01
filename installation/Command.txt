@@ -1,4 +1,7 @@
 python3 GenerateMask.py \
   --model_path /pascalem/_pyt/FitDiT/preprocess \
-  --vton_image /pascalem/data/cat_vton_input/test/image/2025-06-23_00_00_00.jpg \
-  --category Upper-body
+  --file_path /pascalem/data/PromptDresser_input/test_pairs.txt \
+  --input_image /pascalem/data/PromptDresser_input/test/image \
+  --input_cloth /pascalem/data/PromptDresser_input/test/cloth \
+  --output_mask /pascalem/data/PromptDresser_input/test/agnostic-mask-fine \
+  --output_pose /pascalem/data/PromptDresser_input/test/pose
