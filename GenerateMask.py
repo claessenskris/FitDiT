@@ -103,6 +103,8 @@ if __name__ == "__main__":
 
     generator = MaskGenerator(args.model_path, offload=args.offload, aggressive_offload=args.aggressive_offload, device=args.device)
 
+    logging.info("MaskGenerator initialised on %s", args.device)
+
     # Read paired list
     with open(FILE_PATH, 'r') as f:lines = f.readlines()
 
@@ -122,6 +124,8 @@ if __name__ == "__main__":
         offset_left = 0
         offset_right = 0
 
+        logging.info("%s | Generating mask and pose for %s", image_file, category)
+
         masked_vton_img, pose_image = generator.generate_mask(full_image_file, category, offset_top, offset_bottom, offset_left, offset_right)
 
         base_name = os.path.splitext(os.path.basename(image_file))[0]
@@ -129,4 +133,9 @@ if __name__ == "__main__":
         full_pose_file = os.path.join(DIR_OUT_POSE, f"{base_name}_pose.png")
 
         Image.fromarray(masked_vton_img['composite']).save(full_masked_file)
+
+        logging.info("%s | Saved generated MASK to %s", image_file, full_masked_file)
+
         pose_image.save(full_pose_file)
+
+        logging.info("%s | Saved generated POSE to %s", image_file, full_pose_file)
