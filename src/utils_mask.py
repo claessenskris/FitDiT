@@ -338,12 +338,12 @@ def get_mask_location(category, model_parse, pose_data, width,height, \
     im_parse = model_parse.resize((width, height), Image.NEAREST)
     parse_array = np.array(im_parse)
 
-    if category== "Upper-body":
+    if category== "upper":
         mask, mask_gray = get_img_agnostic_upper_rectangle(parse_array, pose_data, offset_top, offset_bottom, offset_left, offset_right)
         return mask, mask_gray
-    elif category=="Dresses":
+    elif category=="overall":
         mask, mask_gray = get_img_agnostic_dresses_rectangle(parse_array, pose_data, offset_top, offset_bottom, offset_left, offset_right)
         return mask, mask_gray
-    elif category=="Lower-body":
+    elif category=="lower":
         mask, mask_gray = get_img_agnostic_lower_rectangle(parse_array, pose_data, offset_top, offset_bottom, offset_left, offset_right)
         return mask, mask_gray
