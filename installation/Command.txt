@@ -1,7 +1,7 @@
-python3 GenerateMask.py \
+python3 GenerateCoarseMaskAndPose.py \
   --model_path /pascalem/_pyt/FitDiT/preprocess \
   --file_path /pascalem/data/PromptDresser_input/test_pairs.txt \
   --input_image /pascalem/data/PromptDresser_input/test/image \
   --input_cloth /pascalem/data/PromptDresser_input/test/cloth \
-  --output_mask /pascalem/data/PromptDresser_input/test/agnostic-mask-fine \
+  --output_mask /pascalem/data/PromptDresser_input/test/agnostic-mask-coarse \
   --output_pose /pascalem/data/PromptDresser_input/test/pose
