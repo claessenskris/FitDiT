@@ -111,7 +111,7 @@ if __name__ == "__main__":
     for line in lines:
         image_file, cloth_file = line.strip().split()
         full_image_file = os.path.join(DIR_IN_IMAGE, image_file)
-        full_cloth_file = os.path.join(DIR_IN_CLOTH_METADATA, cloth_file)
+        full_cloth_file = os.path.join(DIR_IN_CLOTH, cloth_file)
         full_json_file = os.path.splitext(full_cloth_file)[0] + '.json'
 
         # Parse JSON
