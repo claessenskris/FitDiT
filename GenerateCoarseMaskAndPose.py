@@ -21,7 +21,6 @@ def parse_args():
     parser.add_argument("--input_image", type=str, required=True, help="Path to input directory")
     parser.add_argument("--input_cloth", type=str, required=True, help="Path to input directory")
     parser.add_argument("--output_mask", type=str, required=True, help="Path to output directory")
-    parser.add_argument("--output_mask_metadata", type=str, required=True, help="Path to output directory")
     parser.add_argument("--output_pose", type=str, required=True, help="Path to output directory")
     parser.add_argument("--device", type=str, default="cuda:0", help="Device to use")
     parser.add_argument("--offload", action="store_true", help="Offload model to CPU when not in use.")
@@ -92,7 +91,6 @@ if __name__ == "__main__":
     DIR_IN_IMAGE = args.input_image
     DIR_IN_CLOTH = args.input_cloth
     DIR_OUT_MASK = args.output_mask
-    DIR_OUT_MASK_METADATA = args.output_mask_metadata
     DIR_OUT_POSE = args.output_pose
 
     DEBUG = args.debug
@@ -139,7 +137,7 @@ if __name__ == "__main__":
         final_mask = cv2.inRange(img, lower, upper)
 
         base_name = os.path.splitext(os.path.basename(image_file))[0]
-        full_masked_file = os.path.join(DIR_OUT_MASK_METADATA, f"{base_name}_mask.png")
+        full_masked_file = os.path.join(DIR_OUT_MASK, f"{base_name}_mask.png")
         full_pose_file = os.path.join(DIR_OUT_POSE, f"{base_name}_pose.png")
 
         Image.fromarray( final_mask).save(full_masked_file)
