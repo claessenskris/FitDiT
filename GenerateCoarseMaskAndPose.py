@@ -139,7 +139,7 @@ if __name__ == "__main__":
         final_mask = cv2.inRange(img, lower, upper)
 
         base_name = os.path.splitext(os.path.basename(image_file))[0]
-        full_masked_file = os.path.join(DIR_OUT_MASK, f"{base_name}_mask.png")
+        full_masked_file = os.path.join(DIR_OUT_MASK_METADATA, f"{base_name}_mask.png")
         full_pose_file = os.path.join(DIR_OUT_POSE, f"{base_name}_pose.png")
 
         Image.fromarray( final_mask).save(full_masked_file)
